@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Hídrica - Base Naval & Lespan</title>
-    
-    <!-- Favicon (Ícone da aba) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
-
-    <!-- Bibliotecas: Bootstrap 5 (Estilo) e Chart.js (Gráficos) -->
+    <title>Gestão Hídrica Financeira - Base Naval & Lespan</title>
+    <!-- Bibliotecas: Bootstrap 5 e Chart.js -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,31 +17,21 @@
             --lespan-color: #e56b6f;
             --bg-color: #f0f2f5;
         }
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-header { background-color: white; border-bottom: 1px solid #eee; font-weight: 700; color: var(--navy-primary); }
         
-        /* Card Styling */
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-2px); }
-        .card-header { background-color: white; border-bottom: 1px solid #eee; font-weight: 700; color: var(--navy-primary); padding: 15px; border-radius: 12px 12px 0 0 !important; }
+        .nav-pills .nav-link.active { background-color: var(--navy-primary); }
+        .nav-pills .nav-link { color: var(--navy-primary); font-weight: 600; margin-right: 10px; }
         
-        /* Navigation Pills */
-        .nav-pills .nav-link { color: var(--navy-primary); font-weight: 600; margin-right: 10px; background: white; border: 1px solid #e9ecef; }
-        .nav-pills .nav-link.active { background-color: var(--navy-primary); color: white; border-color: var(--navy-primary); }
-        .nav-pills .nav-link:hover:not(.active) { background-color: #e9ecef; }
-
-        /* KPIs */
         .kpi-value { font-size: 1.8rem; font-weight: 800; color: var(--navy-primary); }
-        .kpi-label { font-size: 0.85rem; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .money-text { color: var(--money-color); }
+        .kpi-label { font-size: 0.85rem; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Tables */
-        .table-sm th, .table-sm td { vertical-align: middle; text-align: center; padding: 10px; }
-        .table-hover tbody tr:hover { background-color: #f1f3f5; }
-        
-        /* Indicators */
+        .table-sm th, .table-sm td { vertical-align: middle; text-align: center; }
         .trend-up { color: #dc3545; font-weight: bold; }
         .trend-down { color: #198754; font-weight: bold; }
-        .bg-gradient-primary { background: linear-gradient(45deg, #0a2342, #004e92); color: white; }
+        
+        .money-text { color: var(--money-color); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -53,14 +39,14 @@
 <div class="container py-4">
     
     <!-- Cabeçalho -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-0" style="color: var(--navy-primary);"><i class="fa-solid fa-faucet-drip me-2"></i>Gestão Hídrica</h2>
-            <p class="text-muted mb-0">Monitoramento Integrado: Base Naval & Lespan</p>
+            <h2 class="fw-bold" style="color: var(--navy-primary);"><i class="fa-solid fa-faucet-drip me-2"></i>Gestão Hídrica & Financeira</h2>
+            <p class="text-muted mb-0">Monitoramento Integrado: Volume (m³) e Custo (R$)</p>
         </div>
-        <div class="d-flex align-items-center bg-white p-2 rounded shadow-sm">
-            <label class="fw-bold text-muted me-2 small">ANO REFERÊNCIA:</label>
-            <select id="yearSelect" class="form-select fw-bold border-0 bg-light" style="width: 100px;" onchange="updateUI()">
+        <div class="d-flex gap-2 align-items-center">
+            <label class="fw-bold text-muted me-2">Visualizar Ano:</label>
+            <select id="yearSelect" class="form-select fw-bold shadow-sm" style="width: 150px;" onchange="updateUI()">
                 <option value="2025">2025</option>
                 <option value="2024">2024</option>
             </select>
@@ -68,53 +54,33 @@
     </div>
 
     <!-- KPIs Principais -->
-    <div class="row g-3 mb-4">
+    <div class="row mb-4">
         <div class="col-md-3">
             <div class="card p-3 h-100 border-start border-5 border-primary">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="kpi-label">Consumo Total</div>
-                        <div class="kpi-value" id="kpiConsumoTotal">0</div>
-                        <small class="text-muted">Metros Cúbicos (m³)</small>
-                    </div>
-                    <div class="text-primary opacity-25"><i class="fa-solid fa-cube fa-2x"></i></div>
-                </div>
+                <div class="kpi-label">Consumo Total (m³)</div>
+                <div class="kpi-value" id="kpiConsumoTotal">0</div>
+                <small class="text-muted">Base Naval + Lespan</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card p-3 h-100 border-start border-5 border-success">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="kpi-label">Custo Total</div>
-                        <div class="kpi-value money-text" id="kpiCustoTotal">R$ 0,00</div>
-                        <small class="text-muted">Valor Acumulado</small>
-                    </div>
-                    <div class="text-success opacity-25"><i class="fa-solid fa-sack-dollar fa-2x"></i></div>
-                </div>
+                <div class="kpi-label">Custo Total (R$)</div>
+                <div class="kpi-value money-text" id="kpiCustoTotal">R$ 0,00</div>
+                <small class="text-muted">Soma das faturas</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card p-3 h-100 border-start border-5 border-warning">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="kpi-label">Preço Médio</div>
-                        <div class="kpi-value text-warning" id="kpiPrecoMedio">R$ 0,00</div>
-                        <small class="text-muted">Por m³ consumido</small>
-                    </div>
-                    <div class="text-warning opacity-25"><i class="fa-solid fa-chart-line fa-2x"></i></div>
-                </div>
+                <div class="kpi-label">Preço Médio (R$/m³)</div>
+                <div class="kpi-value text-warning" id="kpiPrecoMedio">R$ 0,00</div>
+                <small class="text-muted">Eficiência Financeira</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card p-3 h-100 border-start border-5 border-danger">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="kpi-label">Maior Fatura</div>
-                        <div class="kpi-value text-danger" style="font-size: 1.6rem;" id="kpiMaiorFatura">R$ 0,00</div>
-                        <small class="text-muted" id="kpiMesMaiorFatura">-</small>
-                    </div>
-                    <div class="text-danger opacity-25"><i class="fa-solid fa-file-invoice-dollar fa-2x"></i></div>
-                </div>
+                <div class="kpi-label">Maior Fatura do Ano</div>
+                <div class="kpi-value text-danger" style="font-size: 1.5rem;" id="kpiMaiorFatura">R$ 0,00</div>
+                <small class="text-muted" id="kpiMesMaiorFatura">-</small>
             </div>
         </div>
     </div>
@@ -122,16 +88,16 @@
     <!-- Navegação por Abas -->
     <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-dashboard" type="button"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</button>
+            <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-dashboard" type="button">📊 Gráficos & Finanças</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-2025-tab" data-bs-toggle="pill" data-bs-target="#pills-2025" type="button">2025 Detalhado</button>
+            <button class="nav-link" id="pills-2025-tab" data-bs-toggle="pill" data-bs-target="#pills-2025" type="button">📅 Detalhado 2025</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-2024-tab" data-bs-toggle="pill" data-bs-target="#pills-2024" type="button">2024 Detalhado</button>
+            <button class="nav-link" id="pills-2024-tab" data-bs-toggle="pill" data-bs-target="#pills-2024" type="button">📅 Detalhado 2024</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-compare-tab" data-bs-toggle="pill" data-bs-target="#pills-compare" type="button"><i class="fa-solid fa-scale-balanced me-1"></i> Comparativo</button>
+            <button class="nav-link" id="pills-compare-tab" data-bs-toggle="pill" data-bs-target="#pills-compare" type="button">⚖️ Comparativo Anual</button>
         </li>
     </ul>
 
@@ -140,17 +106,17 @@
         <!-- ABA 1: DASHBOARD GRÁFICO & FINANCEIRO -->
         <div class="tab-pane fade show active" id="pills-dashboard">
             
-            <!-- Gráfico Financeiro -->
+            <!-- GRÁFICO PRINCIPAL: PARALELO m3 vs R$ -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span><i class="fa-solid fa-money-bill-trend-up me-2 text-success"></i>Análise: Consumo Real (m³) vs Custo (R$)</span>
+                    <div class="card border-success">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-success"><i class="fa-solid fa-sack-dollar me-2"></i>Análise Financeira: Consumo Real vs Custo</span>
                         </div>
                         <div class="card-body">
                             <canvas id="financeChart" height="100"></canvas>
                             <div class="text-center mt-2 text-muted small">
-                                <span class="badge bg-primary me-2">■</span>Volume de Água (m³) &nbsp;|&nbsp; <span class="badge bg-success me-2">▬</span>Valor Pago (R$)
+                                * Barras Azuis = Volume de Água (m³) | Linha Verde = Valor Pago (R$)
                             </div>
                         </div>
                     </div>
@@ -158,25 +124,23 @@
             </div>
 
             <div class="row">
-                <!-- Gráfico de Volume -->
-                <div class="col-lg-8">
+                <div class="col-lg-6">
                     <div class="card h-100">
-                        <div class="card-header">Volume Consumido por Unidade</div>
+                        <div class="card-header">Volume Consumido (Base Naval vs Lespan)</div>
                         <div class="card-body">
-                            <canvas id="mainChart" height="180"></canvas>
+                            <canvas id="mainChart" height="150"></canvas>
                         </div>
                     </div>
                 </div>
-                <!-- Status -->
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card h-100">
-                        <div class="card-header">Resumo da Situação</div>
+                        <div class="card-header">Status das Leituras</div>
                         <div class="card-body">
-                             <div class="alert alert-light border">
-                                <h6 class="alert-heading fw-bold"><i class="fa-solid fa-lightbulb text-warning"></i> Dica de Análise:</h6>
-                                <p class="small mb-0">Acompanhe a linha verde no gráfico acima. Se ela subir enquanto as barras azuis descem, isso indica um aumento na tarifa ou multas, não no consumo de água.</p>
+                             <div class="alert alert-info">
+                                <strong><i class="fa-solid fa-info-circle"></i> Nota:</strong> 
+                                A correlação entre m³ e R$ ajuda a identificar se houve aumento de tarifa ou desperdício. 
+                                Se a linha verde subir enquanto as barras azuis descem, o custo unitário aumentou.
                              </div>
-                             <hr>
                             <ul class="list-group list-group-flush" id="statusList">
                                 <!-- Preenchido via JS -->
                             </ul>
@@ -189,11 +153,12 @@
         <!-- ABA 2: DETALHADO 2025 -->
         <div class="tab-pane fade" id="pills-2025">
             <div class="card">
-                <div class="card-header bg-gradient-primary">
-                    <span class="text-white"><i class="fa-solid fa-calendar-days me-2"></i>Faturas de 2025</span>
+                <div class="card-header d-flex justify-content-between">
+                    <span>Faturas de 2025</span>
+                    <span class="badge bg-primary">Ano Corrente</span>
                 </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover table-striped mb-0 align-middle">
+                <div class="card-body table-responsive">
+                    <table class="table table-hover table-striped table-sm align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>Mês</th>
@@ -212,11 +177,12 @@
         <!-- ABA 3: DETALHADO 2024 -->
         <div class="tab-pane fade" id="pills-2024">
             <div class="card">
-                <div class="card-header">
-                    <span><i class="fa-solid fa-clock-rotate-left me-2"></i>Histórico 2024</span>
+                <div class="card-header d-flex justify-content-between">
+                    <span>Faturas de 2024</span>
+                    <span class="badge bg-secondary">Histórico</span>
                 </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover table-striped mb-0 align-middle">
+                <div class="card-body table-responsive">
+                    <table class="table table-hover table-striped table-sm align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>Mês</th>
@@ -239,7 +205,7 @@
                     <div class="card">
                         <div class="card-header bg-primary text-white">Comparativo Volume (m³)</div>
                         <div class="card-body">
-                            <canvas id="compareChartVol" height="200"></canvas>
+                            <canvas id="compareChartVol" height="150"></canvas>
                         </div>
                     </div>
                 </div>
@@ -247,15 +213,15 @@
                     <div class="card">
                         <div class="card-header bg-success text-white">Comparativo Financeiro (R$)</div>
                         <div class="card-body">
-                            <canvas id="compareChartFin" height="200"></canvas>
+                            <canvas id="compareChartFin" height="150"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">Tabela de Variação Percentual (2025 vs 2024)</div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-bordered text-center mb-0">
+                        <div class="card-header">Tabela de Variação (2025 vs 2024)</div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-bordered text-center">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Mês</th>
@@ -278,19 +244,12 @@
     </div>
 </div>
 
-<!-- Rodapé -->
-<footer class="text-center py-4 text-muted small bg-white mt-4 border-top">
-    <div class="container">
-        Gestão Hídrica Base Naval &copy; 2025 - Painel Interativo
-    </div>
-</footer>
-
 <script>
     // DADOS ESTRUTURADOS - VOLUME (m3)
     const dbVol = {
         months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
         
-        // Base Naval (Soma dos 2 Hidrômetros)
+        // Base Naval (Soma H1+H2)
         baseNaval: {
             2024: [39599, 41471, 38758, 40874, 39625, 33576, 32257, 29161, 30129, 37508, 24498, 28735],
             2025: [29523, 31152, 31525, 35663, 33971, 28708, 31069, 31039, 30794, 37508, null, null]
@@ -302,16 +261,22 @@
         }
     };
 
-    // DADOS ESTRUTURADOS - CUSTOS (R$)
+    // DADOS ESTRUTURADOS - CUSTOS (R$) - Soma de todas as faturas do mês
     const dbFin = {
-        2024: [1309686.00, 1286805.95, 1306085.00, 1392186.64, 1263393.00, 1120495.00, 1075082.00, 981056.00, 1004037.00, 1254901.20, 821544.00, 1084810.00],
-        2025: [1113089.00, 1175472.00, 1196680.00, 1353333.00, 1292153.00, 1080406.00, 1196040.00, 874621.00, 1355213.00, 1225487.00, 0, 0]
+        2024: [
+            1309686.00, 1286805.95, 1306085.00, 1392186.64, 1263393.00, 
+            1120495.00, 1075082.00, 981056.00, 1004037.00, 1254901.20, 
+            821544.00, 1084810.00
+        ],
+        2025: [
+            1113089.00, 1175472.00, 1196680.00, 1353333.00, 1292153.00, 
+            1080406.00, 1196040.00, 874621.00, 1355213.00, 1225487.00 /*Estimado Out*/, 0, 0
+        ]
     };
 
-    // Variáveis globais dos gráficos
+    // Variáveis dos Gráficos
     let mainChart, financeChart, cmpVolChart, cmpFinChart;
 
-    // Função principal que atualiza a tela
     function updateUI() {
         const year = document.getElementById('yearSelect').value;
         updateKPIs(year);
@@ -320,7 +285,6 @@
         renderStatusList(year);
     }
 
-    // Atualiza os cartões do topo
     function updateKPIs(year) {
         const volBN = dbVol.baseNaval[year];
         const volLP = dbVol.lespan[year];
@@ -330,12 +294,14 @@
         let totalCusto = 0;
         let maxCusto = 0;
         let maxCustoIdx = -1;
+        let countMeses = 0;
 
         for(let i=0; i<12; i++) {
             if(volBN[i] !== null) {
-                totalVol += volBN[i] + (volLP[i] || 0);
+                totalVol += volBN[i] + volLP[i];
                 if(custo[i] > 0) {
                     totalCusto += custo[i];
+                    countMeses++;
                     if(custo[i] > maxCusto) {
                         maxCusto = custo[i];
                         maxCustoIdx = i;
@@ -346,20 +312,14 @@
 
         const precoMedio = totalVol > 0 ? (totalCusto / totalVol) : 0;
 
-        animateValue('kpiConsumoTotal', totalVol, ' pt-BR', '');
+        document.getElementById('kpiConsumoTotal').innerText = totalVol.toLocaleString('pt-BR');
         document.getElementById('kpiCustoTotal').innerText = totalCusto.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         document.getElementById('kpiPrecoMedio').innerText = precoMedio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) + " / m³";
+        
         document.getElementById('kpiMaiorFatura').innerText = maxCusto.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         document.getElementById('kpiMesMaiorFatura').innerText = maxCustoIdx >= 0 ? dbVol.months[maxCustoIdx] : '-';
     }
 
-    // Pequena animação para números
-    function animateValue(id, end, locale, suffix) {
-        const obj = document.getElementById(id);
-        obj.innerText = end.toLocaleString(locale) + suffix;
-    }
-
-    // Renderiza Tabelas
     function renderTable(year, tableId) {
         const tbody = document.getElementById(tableId);
         tbody.innerHTML = '';
@@ -389,14 +349,16 @@
         });
     }
 
-    // Tabela Comparativa
     function renderComparativo() {
         const tbody = document.getElementById('compareTableBody');
         tbody.innerHTML = '';
 
         dbVol.months.forEach((m, i) => {
+            // Volume
             const vol24 = (dbVol.baseNaval[2024][i] || 0) + (dbVol.lespan[2024][i] || 0);
             const bn25 = dbVol.baseNaval[2025][i];
+            
+            // Financeiro
             const fin24 = dbFin[2024][i] || 0;
             const fin25 = dbFin[2025][i] || 0;
 
@@ -407,16 +369,16 @@
 
             const vol25 = bn25 + (dbVol.lespan[2025][i] || 0);
             
+            // Variação Vol
             const varVol = ((vol25 - vol24) / vol24) * 100;
             const colorVol = varVol > 0 ? 'trend-up' : 'trend-down';
-            const iconVol = varVol > 0 ? '▲' : '▼';
             
+            // Variação Fin
             let varFinHtml = '-';
             if(fin25 > 0) {
                 const varFin = ((fin25 - fin24) / fin24) * 100;
                 const colorFin = varFin > 0 ? 'trend-up' : 'trend-down';
-                const iconFin = varFin > 0 ? '▲' : '▼';
-                varFinHtml = `<span class="${colorFin}">${iconFin} ${Math.abs(varFin).toFixed(1)}%</span>`;
+                varFinHtml = `<span class="${colorFin}">${varFin > 0 ? '+' : ''}${varFin.toFixed(1)}%</span>`;
             }
 
             const row = `
@@ -424,7 +386,7 @@
                     <td class="fw-bold">${m}</td>
                     <td>${vol24.toLocaleString()}</td>
                     <td>${vol25.toLocaleString()}</td>
-                    <td class="${colorVol}">${iconVol} ${Math.abs(varVol).toFixed(1)}%</td>
+                    <td class="${colorVol}">${varVol > 0 ? '▲' : '▼'} ${Math.abs(varVol).toFixed(1)}%</td>
                     <td>${fin24.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
                     <td>${fin25 > 0 ? fin25.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : '-'}</td>
                     <td>${varFinHtml}</td>
@@ -447,15 +409,13 @@
             data: {
                 labels: dbVol.months,
                 datasets: [
-                    { label: 'Base Naval (Total)', data: bn, backgroundColor: '#0a2342', borderRadius: 4 },
-                    { label: 'Lespan Clube', data: lp, backgroundColor: '#e56b6f', borderRadius: 4 }
+                    { label: 'Base Naval (Total)', data: bn, backgroundColor: '#0a2342' },
+                    { label: 'Lespan Clube', data: lp, backgroundColor: '#e56b6f' }
                 ]
             },
             options: { 
                 responsive: true, 
-                maintainAspectRatio: false,
-                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
-                plugins: { legend: { position: 'top' } }
+                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } 
             }
         });
     }
@@ -465,7 +425,8 @@
         const ctx = document.getElementById('financeChart').getContext('2d');
         if(financeChart) financeChart.destroy();
 
-        const totalVol = dbVol.baseNaval[year].map((v, i) => (v!==null) ? v + (dbVol.lespan[year][i]||0) : null);
+        // Preparar dados totais de volume
+        const totalVol = dbVol.baseNaval[year].map((v, i) => (v!==null) ? v + dbVol.lespan[year][i] : null);
         const totalFin = dbFin[year].map(v => v > 0 ? v : null);
 
         financeChart = new Chart(ctx, {
@@ -474,7 +435,7 @@
                 labels: dbVol.months,
                 datasets: [
                     {
-                        label: 'Custo (R$)',
+                        label: 'Valor da Fatura (R$)',
                         data: totalFin,
                         type: 'line',
                         borderColor: '#198754',
@@ -482,22 +443,20 @@
                         borderWidth: 3,
                         yAxisID: 'y1',
                         tension: 0.3,
-                        pointRadius: 5,
-                        fill: false
+                        pointRadius: 4,
+                        fill: true
                     },
                     {
-                        label: 'Volume (m³)',
+                        label: 'Consumo Total (m³)',
                         data: totalVol,
-                        backgroundColor: 'rgba(13, 110, 253, 0.6)',
+                        backgroundColor: 'rgba(13, 110, 253, 0.7)',
                         yAxisID: 'y',
-                        borderRadius: 5,
-                        barPercentage: 0.6
+                        borderRadius: 4
                     }
                 ]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 scales: {
                     y: {
@@ -512,7 +471,7 @@
                         display: true,
                         position: 'right',
                         title: { display: true, text: 'Custo (R$)' },
-                        grid: { drawOnChartArea: true }
+                        grid: { drawOnChartArea: true } // Grade apenas para o dinheiro
                     }
                 }
             }
@@ -526,18 +485,18 @@
         if(cmpVolChart) cmpVolChart.destroy();
 
         const vol24 = dbVol.baseNaval[2024].map((v, i) => v + dbVol.lespan[2024][i]);
-        const vol25 = dbVol.baseNaval[2025].map((v, i) => (v!==null) ? v + (dbVol.lespan[2025][i]||0) : null);
+        const vol25 = dbVol.baseNaval[2025].map((v, i) => (v!==null) ? v + dbVol.lespan[2025][i] : null);
 
         cmpVolChart = new Chart(ctx1, {
             type: 'line',
             data: {
                 labels: dbVol.months,
                 datasets: [
-                    { label: '2024', data: vol24, borderColor: '#adb5bd', borderDash: [5,5], borderWidth: 2, pointRadius: 0 },
+                    { label: '2024', data: vol24, borderColor: '#adb5bd', borderDash: [5,5], borderWidth: 2 },
                     { label: '2025', data: vol25, borderColor: '#0a2342', borderWidth: 3, backgroundColor: 'rgba(10,35,66,0.1)', fill: true }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { responsive: true }
         });
 
         // Comparativo Financeiro
@@ -553,7 +512,7 @@
                     { label: '2025 (R$)', data: dbFin[2025], backgroundColor: '#198754' }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { responsive: true }
         });
     }
 
@@ -568,8 +527,8 @@
                 <span class="fw-bold text-primary">${statusText}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Matrículas Ativas
-                <span class="badge bg-secondary">3</span>
+                Matrículas
+                <span class="badge bg-secondary">3 Ativas</span>
             </li>
         `;
     }
